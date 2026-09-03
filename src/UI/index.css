@@ -38,3 +38,42 @@
 .dark .text-red-700 { color: #fca5a5; }
 .dark .border-green-200 { border-color: rgba(16, 185, 129, 0.35); }
 .dark .border-red-200 { border-color: rgba(239, 68, 68, 0.35); }
+
+/* 全局按钮反馈：悬停轻微提亮，按下微缩，禁用状态无效果 */
+button {
+  transition:
+    filter 0.15s ease,
+    transform 0.15s ease,
+    background-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+button:not(:disabled):hover {
+  filter: brightness(1.08);
+}
+button:not(:disabled):active {
+  transform: scale(0.97);
+}
+
+/* 主题切换过渡：仅在切换期间临时生效（配合 App 里的 theme-animating 类） */
+.theme-animating,
+.theme-animating * {
+  transition:
+    background-color 0.5s ease,
+    color 0.5s ease,
+    border-color 0.5s ease !important;
+}
+
+/* 侧边栏切换栏目时的内容淡入动画 */
+@keyframes pageFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.page-enter {
+  animation: pageFadeIn 0.3s ease;
+}

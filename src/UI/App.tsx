@@ -49,11 +49,14 @@ export default function App() {
   const [settings, setSettings] = useState<AppSettings>(loadSettings);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  // 主题切换动画标记：切换瞬间开启，结束后移除
+  const [themeAnimating, setThemeAnimating] = useState(false);
 
   const settingsRef = useRef(settings);
   useEffect(() => {
     settingsRef.current = settings;
   }, [settings]);
+  const themeTimerRef = useRef<number | null>(null);
 
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);
@@ -64,6 +67,25 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
   }, [settings]);
+
+  // 设置变更统一入口：深色模式切换采用“先启用过渡、下一帧再换色”的两步顺序，
+  // 保证浅色 ↔ 深色两个方向都有平滑渐变
+  const applySettings = (next: AppSettings) => {
+    if (next.dark === settings.dark) {
+      setSettings(next);
+      return;
+    }
+
+    if (themeTimerRef.current) window.clearTimeout(themeTimerRef.current);
+    setThemeAnimating(true);
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        setSettings(next);
+        themeTimerRef.current = window.setTimeout(() => setThemeAnimating(false), 600);
+      });
+    });
+  };
 
   const t = translations[language];
 
@@ -128,6 +150,8 @@ export default function App() {
   return (
     <div
       className={`flex h-screen font-sans overflow-hidden select-none ${
+        themeAnimating ? 'theme-animating' : ''
+      } ${
         settings.dark ? 'dark bg-gray-900 text-gray-100' : 'bg-gray-50 text-gray-900'
       }`}
     >
@@ -138,46 +162,49 @@ export default function App() {
         onToggleLanguage={() => setLanguage(language === 'en' ? 'zh' : 'en')}
       />
 
-      {activeTab === 'games' && (
-        <Dashboard
-          games={games}
-          gpuInfo={gpuInfo}
-          onSelectGame={(game) => {
-            setSelectedGame(game);
-            console.log('Selected game:', game.name);
-          }}
-          language={language}
-          onScan={scanGames}
-          scanning={loading}
-          error={error}
-          driverReminder={settings.driverReminder}
-        />
-      )}
-
-      {activeTab === 'gpu' && <GpuAnalyzer language={language} />}
-
-      {activeTab === 'benchmark' && <Benchmark language={language} />}
-
-      {activeTab === 'settings' && (
-        <SettingsPanel
-          language={language}
-          setLanguage={setLanguage}
-          settings={settings}
-          setSettings={setSettings}
-        />
-      )}
-
-      {activeTab !== 'games' &&
-        activeTab !== 'gpu' &&
-        activeTab !== 'benchmark' &&
-        activeTab !== 'settings' && (
-          <div className="flex-1 flex items-center justify-center text-gray-400">
-            <div className="text-center">
-              <h2 className="text-xl font-medium text-gray-900 mb-2">{t.comingSoon}</h2>
-              <p>{t.comingSoonDesc}</p>
-            </div>
-          </div>
+      {/* 切换栏目时通过 key 触发内容重挂载，播放淡入上滑动画 */}
+      <div key={activeTab} className="page-enter flex-1 flex min-w-0">
+        {activeTab === 'games' && (
+          <Dashboard
+            games={games}
+            gpuInfo={gpuInfo}
+            onSelectGame={(game) => {
+              setSelectedGame(game);
+              console.log('Selected game:', game.name);
+            }}
+            language={language}
+            onScan={scanGames}
+            scanning={loading}
+            error={error}
+            driverReminder={settings.driverReminder}
+          />
         )}
+
+        {activeTab === 'gpu' && <GpuAnalyzer language={language} />}
+
+        {activeTab === 'benchmark' && <Benchmark language={language} />}
+
+        {activeTab === 'settings' && (
+          <SettingsPanel
+            language={language}
+            setLanguage={setLanguage}
+            settings={settings}
+            setSettings={applySettings}
+          />
+        )}
+
+        {activeTab !== 'games' &&
+          activeTab !== 'gpu' &&
+          activeTab !== 'benchmark' &&
+          activeTab !== 'settings' && (
+            <div className="flex-1 flex items-center justify-center text-gray-400">
+              <div className="text-center">
+                <h2 className="text-xl font-medium text-gray-900 mb-2">{t.comingSoon}</h2>
+                <p>{t.comingSoonDesc}</p>
+              </div>
+            </div>
+          )}
+      </div>
     </div>
   );
 }
