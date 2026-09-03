@@ -22,16 +22,29 @@ app.MapGet("/api/health", () => Results.Ok(new { status = "ok" }));
 app.MapGet("/api/games", () =>
 {
     var scanner = new ScannerManager();
+    var dlssScanner = new DlssScanner();
+    var engineDetector = new EngineDetector();
     var games = scanner.ScanAll();
 
-    var dtos = games.Select(game => new GameDto
+    var dtos = games.Select(game =>
     {
-        Id = game.Id,
-        Name = game.Name,
-        Path = game.InstallDirectory,
-        Launcher = game.Launcher,
-        CoverImage = game.CoverImage,
-        Icon = game.Icon
+        var components = dlssScanner.Scan(game.InstallDirectory);
+        return new GameDto
+        {
+            Id = game.Id,
+            Name = game.Name,
+            Path = game.InstallDirectory,
+            Launcher = game.Launcher,
+            Engine = engineDetector.Detect(game.InstallDirectory),
+            DlssVersion = DlssScanner.GetPrimary(components, DlssScanner.SuperResolution)?.Version
+                          ?? "未检测到",
+            DlssGVersion = DlssScanner.GetPrimary(components, DlssScanner.FrameGeneration)?.Version,
+            DlssDVersion = DlssScanner.GetPrimary(components, DlssScanner.RayReconstruction)?.Version,
+            DlssNrVersion = DlssScanner.GetPrimary(components, DlssScanner.NeuralRendering)?.Version,
+            DlssComponents = components,
+            CoverImage = game.CoverImage,
+            Icon = game.Icon
+        };
     });
 
     return Results.Ok(dtos);

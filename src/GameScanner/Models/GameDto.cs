@@ -27,6 +27,11 @@ namespace DLSS5Manager.GameScanner.Models
 
         public string? DlssDVersion { get; set; }
 
+        public string? DlssNrVersion { get; set; }
+
+        public IReadOnlyList<DlssComponent> DlssComponents { get; set; } =
+            Array.Empty<DlssComponent>();
+
         public int CompatibilityScore { get; set; }
 
         public string RecommendedVersion { get; set; } = "3.7.0";

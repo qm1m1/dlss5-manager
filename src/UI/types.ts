@@ -9,10 +9,22 @@ export interface Game {
   dlssVersion: string;
   dlssGVersion?: string;
   dlssDVersion?: string;
+  dlssNrVersion?: string;
+  dlssComponents?: DLSSComponent[];
   compatibilityScore: number;
   recommendedVersion: string;
   icon?: string;
   coverImage?: string;
+}
+
+export interface DLSSComponent {
+  type: 'SuperResolution' | 'FrameGeneration' | 'RayReconstruction' | 'NeuralRendering';
+  fileName: string;
+  path: string;
+  version: string;
+  sha256: string;
+  size: number;
+  isPrimary: boolean;
 }
 
 export interface DLSSVersion {
