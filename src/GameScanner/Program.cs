@@ -57,5 +57,12 @@ app.MapGet("/api/gpu", () =>
     return Results.Ok(scanner.Scan());
 });
 
+// GPU 实时状态接口：使用率、显存占用、温度、功耗、频率等
+app.MapGet("/api/gpu/status", () =>
+{
+    var reader = new GpuStatusReader();
+    return Results.Ok(reader.GetStatus());
+});
+
 // 后端固定监听 5000 端口，前端 vite 会把 /api 请求代理到这里
 app.Run("http://localhost:5000");

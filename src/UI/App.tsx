@@ -3,22 +3,67 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Sidebar } from './components/Sidebar';
 import { Dashboard } from './components/Dashboard';
+import { GpuAnalyzer } from './components/GpuAnalyzer';
+import { Benchmark } from './components/Benchmark';
+import { SettingsPanel } from './components/SettingsPanel';
 import { mockGpuInfo } from './data';
-import { Game, GPUInfo } from './types';
+import { AppSettings, Game, GPUInfo } from './types';
 import { Language, translations } from './i18n';
+
+const SETTINGS_KEY = 'dlss5-settings-v1';
+const LANG_KEY = 'dlss5-lang';
+
+const defaultSettings: AppSettings = {
+  autoScan: true,
+  driverReminder: true,
+  autoBackup: true,
+  backupKeep: 3,
+  dark: false,
+};
+
+function loadSettings(): AppSettings {
+  try {
+    const raw = localStorage.getItem(SETTINGS_KEY);
+    if (raw) return { ...defaultSettings, ...JSON.parse(raw) };
+  } catch {
+    // 忽略损坏的本地存储
+  }
+  return defaultSettings;
+}
+
+function loadLanguage(): Language {
+  const raw = localStorage.getItem(LANG_KEY);
+  return raw === 'en' ? 'en' : 'zh';
+}
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('games');
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
-  const [language, setLanguage] = useState<Language>('zh');
+  const [language, setLanguageState] = useState<Language>(loadLanguage);
   const [games, setGames] = useState<Game[]>([]);
   // 先用 mock 数据占位，后端返回真实显卡信息后替换，保证界面不会闪空白
   const [gpuInfo, setGpuInfo] = useState<GPUInfo>(mockGpuInfo);
+  const [settings, setSettings] = useState<AppSettings>(loadSettings);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const settingsRef = useRef(settings);
+  useEffect(() => {
+    settingsRef.current = settings;
+  }, [settings]);
+
+  const setLanguage = (lang: Language) => {
+    setLanguageState(lang);
+    localStorage.setItem(LANG_KEY, lang);
+  };
+
+  // 持久化设置
+  useEffect(() => {
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+  }, [settings]);
 
   const t = translations[language];
 
@@ -63,6 +108,9 @@ export default function App() {
           // 后端暂不返回这两项：RTX 显卡普遍支持帧生成与光线重建，按型号推断
           frameGenSupported: String(g.name ?? '').includes('RTX'),
           rayReconSupported: String(g.name ?? '').includes('RTX'),
+          // 驱动是否达到 DLSS5 要求（后端返回 driverReadyForDlss5）
+          driverReady:
+            typeof g.driverReadyForDlss5 === 'boolean' ? g.driverReadyForDlss5 : null,
         });
       })
       .catch(() => {
@@ -70,25 +118,30 @@ export default function App() {
       });
   };
 
-  // 首次进入页面自动扫描一次游戏，并读取显卡信息
+  // 首次进入：按设置决定是否自动扫描游戏，并读取显卡信息
   useEffect(() => {
-    scanGames();
+    if (settingsRef.current.autoScan) scanGames();
     fetchGpu();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
-    <div className="flex h-screen font-sans bg-gray-50 text-gray-900 overflow-hidden select-none">
-      <Sidebar 
-        activeTab={activeTab} 
-        setActiveTab={setActiveTab} 
+    <div
+      className={`flex h-screen font-sans overflow-hidden select-none ${
+        settings.dark ? 'dark bg-gray-900 text-gray-100' : 'bg-gray-50 text-gray-900'
+      }`}
+    >
+      <Sidebar
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
         language={language}
-        onToggleLanguage={() => setLanguage(lang => lang === 'en' ? 'zh' : 'en')}
+        onToggleLanguage={() => setLanguage(language === 'en' ? 'zh' : 'en')}
       />
-      
+
       {activeTab === 'games' && (
-        <Dashboard 
-          games={games} 
-          gpuInfo={gpuInfo} 
+        <Dashboard
+          games={games}
+          gpuInfo={gpuInfo}
           onSelectGame={(game) => {
             setSelectedGame(game);
             console.log('Selected game:', game.name);
@@ -97,17 +150,34 @@ export default function App() {
           onScan={scanGames}
           scanning={loading}
           error={error}
+          driverReminder={settings.driverReminder}
         />
       )}
-      
-      {activeTab !== 'games' && (
-        <div className="flex-1 flex items-center justify-center text-gray-400">
-          <div className="text-center">
-            <h2 className="text-xl font-medium text-gray-900 mb-2">{t.comingSoon}</h2>
-            <p>{t.comingSoonDesc}</p>
-          </div>
-        </div>
+
+      {activeTab === 'gpu' && <GpuAnalyzer language={language} />}
+
+      {activeTab === 'benchmark' && <Benchmark language={language} />}
+
+      {activeTab === 'settings' && (
+        <SettingsPanel
+          language={language}
+          setLanguage={setLanguage}
+          settings={settings}
+          setSettings={setSettings}
+        />
       )}
+
+      {activeTab !== 'games' &&
+        activeTab !== 'gpu' &&
+        activeTab !== 'benchmark' &&
+        activeTab !== 'settings' && (
+          <div className="flex-1 flex items-center justify-center text-gray-400">
+            <div className="text-center">
+              <h2 className="text-xl font-medium text-gray-900 mb-2">{t.comingSoon}</h2>
+              <p>{t.comingSoonDesc}</p>
+            </div>
+          </div>
+        )}
     </div>
   );
 }

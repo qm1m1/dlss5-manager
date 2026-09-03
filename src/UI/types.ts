@@ -43,4 +43,24 @@ export interface GPUInfo {
   dlssSupported: boolean;
   frameGenSupported: boolean;
   rayReconSupported: boolean;
+  driverReady?: boolean | null;
+}
+
+export interface GPUStatus {
+  name: string;
+  utilizationPct: number | null;
+  memoryUsedMb: number | null;
+  memoryTotalMb: number | null;
+  temperatureC: number | null;
+  powerWatts: number | null;
+  coreClockMhz: number | null;
+  fanPct: number | null;
+}
+
+export interface AppSettings {
+  autoScan: boolean;
+  driverReminder: boolean;
+  autoBackup: boolean;
+  backupKeep: number;
+  dark: boolean;
 }

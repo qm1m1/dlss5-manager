@@ -1,1 +1,40 @@
 @import "tailwindcss";
+
+/* 深色模式：根节点带 .dark 类时统一覆盖主要配色 */
+.dark { color-scheme: dark; }
+.dark body { background-color: #111827; }
+
+/* 表面与背景 */
+.dark .bg-white,
+.dark .bg-white\/80 { background-color: #1f2937; }
+.dark .bg-gray-50 { background-color: #111827; }
+.dark .bg-gray-100 { background-color: #374151; }
+.dark .bg-gray-200 { background-color: #4b5563; }
+.dark .bg-gray-900 { background-color: #0b1120; }
+
+/* 文字 */
+.dark .text-gray-900 { color: #f9fafb; }
+.dark .text-gray-800 { color: #f3f4f6; }
+.dark .text-gray-700 { color: #d1d5db; }
+.dark .text-gray-600 { color: #9ca3af; }
+.dark .text-gray-500 { color: #9ca3af; }
+.dark .text-gray-400 { color: #6b7280; }
+
+/* 边框 */
+.dark .border-gray-200,
+.dark .border-gray-100 { border-color: #374151; }
+.dark .border-gray-300 { border-color: #4b5563; }
+
+/* 悬停态 */
+.dark .hover\:bg-gray-50:hover { background-color: #374151; }
+.dark .hover\:bg-gray-100:hover { background-color: #374151; }
+.dark .hover\:border-gray-300:hover { border-color: #4b5563; }
+
+/* 状态色（徽标 / 提示）在深色下更柔和 */
+.dark .bg-green-50 { background-color: rgba(16, 185, 129, 0.12); }
+.dark .bg-red-50 { background-color: rgba(239, 68, 68, 0.12); }
+.dark .text-green-700 { color: #6ee7b7; }
+.dark .text-green-600 { color: #34d399; }
+.dark .text-red-700 { color: #fca5a5; }
+.dark .border-green-200 { border-color: rgba(16, 185, 129, 0.35); }
+.dark .border-red-200 { border-color: rgba(239, 68, 68, 0.35); }

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Game, GPUInfo } from '../types';
-import { Cpu, HardDrive, CheckCircle2, AlertCircle, RefreshCw, Archive, Settings2, DownloadCloud } from 'lucide-react';
+import { Cpu, HardDrive, CheckCircle2, AlertCircle, RefreshCw, Archive, Settings2, DownloadCloud, AlertTriangle } from 'lucide-react';
 import { Language, translations } from '../i18n';
 
 interface DashboardProps {
@@ -11,9 +11,19 @@ interface DashboardProps {
   onScan: () => void;
   scanning: boolean;
   error: string | null;
+  driverReminder: boolean;
 }
 
-export function Dashboard({ games, gpuInfo, onSelectGame, language, onScan, scanning, error }: DashboardProps) {
+export function Dashboard({
+  games,
+  gpuInfo,
+  onSelectGame,
+  language,
+  onScan,
+  scanning,
+  error,
+  driverReminder,
+}: DashboardProps) {
   const t = translations[language];
 
   const handleScan = () => onScan();
@@ -30,9 +40,9 @@ export function Dashboard({ games, gpuInfo, onSelectGame, language, onScan, scan
               <span className="text-gray-900 font-bold text-lg">{gpuInfo.model}</span>
             </div>
           </div>
-          
+
           <div className="h-10 w-px bg-gray-200 mx-2"></div>
-          
+
           <div className="flex items-center gap-6">
             <div className="flex flex-col">
               <span className="text-[10px] text-gray-400 uppercase font-bold tracking-widest mb-1">{t.driver}</span>
@@ -56,20 +66,24 @@ export function Dashboard({ games, gpuInfo, onSelectGame, language, onScan, scan
               <CheckCircle2 className="w-3 h-3" /> Frame Gen
             </span>
           )}
+          {driverReminder && gpuInfo.driverReady === false && (
+            <span className="px-3 py-1 bg-red-50 text-red-700 border border-red-200 rounded-lg text-[10px] font-bold tracking-wider uppercase flex items-center gap-1.5">
+              <AlertTriangle className="w-3 h-3" /> {t.needDriverUpdate}
+            </span>
+          )}
         </div>
       </header>
 
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto p-8">
         <div className="max-w-6xl mx-auto space-y-8">
-          
           {/* Section Header */}
           <div className="flex items-end justify-between">
             <div>
               <h2 className="text-2xl font-bold text-gray-900 mb-2">{t.detectedGames}</h2>
               <p className="text-gray-500 text-sm">{t.manageDesc}</p>
             </div>
-            <button 
+            <button
               onClick={handleScan}
               disabled={scanning}
               className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-600/20 px-6 py-2.5 rounded-xl transition-all text-sm font-bold disabled:opacity-50"
@@ -106,13 +120,13 @@ export function Dashboard({ games, gpuInfo, onSelectGame, language, onScan, scan
           {/* Game Grid */}
           {games.length > 0 && (
             <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-              {games.map(game => (
-                <div 
-                  key={game.id} 
+              {games.map((game) => (
+                <div
+                  key={game.id}
                   className="bg-white border border-gray-200 shadow-sm rounded-2xl overflow-hidden hover:shadow-md hover:border-gray-300 transition-all group flex flex-col"
                 >
                   {/* Game Header Image (Mock) */}
-                  <div 
+                  <div
                     className="h-32 bg-gray-100 relative bg-cover bg-center border-b border-gray-100"
                     style={{ backgroundImage: `url(${game.coverImage})` }}
                   >
@@ -128,7 +142,7 @@ export function Dashboard({ games, gpuInfo, onSelectGame, language, onScan, scan
                       <span className="text-gray-400">{t.engine}</span>
                       <span className="text-gray-700 font-bold">{game.engine}</span>
                     </div>
-                    
+
                     <div className="space-y-3 bg-gray-50 rounded-xl p-4 border border-gray-100">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
@@ -137,7 +151,7 @@ export function Dashboard({ games, gpuInfo, onSelectGame, language, onScan, scan
                         </div>
                         <span className="text-xs font-mono font-bold text-gray-700">v{game.dlssVersion}</span>
                       </div>
-                      
+
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <DownloadCloud className="w-4 h-4 text-green-600" />
@@ -148,7 +162,7 @@ export function Dashboard({ games, gpuInfo, onSelectGame, language, onScan, scan
                     </div>
 
                     <div className="mt-auto pt-2 grid grid-cols-2 gap-3">
-                      <button 
+                      <button
                         onClick={() => onSelectGame(game)}
                         className="bg-green-50 hover:bg-green-600 text-green-700 hover:text-white font-bold py-2.5 rounded-xl text-sm transition-all border border-green-200 hover:border-transparent"
                       >
@@ -163,7 +177,6 @@ export function Dashboard({ games, gpuInfo, onSelectGame, language, onScan, scan
               ))}
             </div>
           )}
-
         </div>
       </main>
     </div>
