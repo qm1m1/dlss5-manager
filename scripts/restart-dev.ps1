@@ -86,7 +86,7 @@ $frontend = Start-Process `
 
 $backend = Start-Process `
     -FilePath $dotnetCommand `
-    -ArgumentList @('run', '--no-restore', '--project', $backendProject) `
+    -ArgumentList @('run', '--project', $backendProject) `
     -WorkingDirectory $projectRoot `
     -WindowStyle Hidden `
     -RedirectStandardOutput (Join-Path $logDirectory 'backend.log') `

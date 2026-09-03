@@ -17,3 +17,7 @@ obj/
 *.user
 *.suo
 .dev/
+
+# 运行时生成的 DLSS DLL 与游戏备份（二进制/用户数据，不入库）
+resources/DLSS/*/nvngx_*.dll
+data/backups/

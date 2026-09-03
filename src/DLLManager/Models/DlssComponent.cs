@@ -1,4 +1,4 @@
-namespace DLSS5Manager.GameScanner.Models
+namespace DLSS5Manager.DLLManager.Models
 {
     /// <summary>
     /// A DLSS runtime found inside a game installation.

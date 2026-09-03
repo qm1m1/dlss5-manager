@@ -1,9 +1,9 @@
 using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
-using DLSS5Manager.GameScanner.Models;
+using DLSS5Manager.DLLManager.Models;
 
-namespace DLSS5Manager.GameScanner
+namespace DLSS5Manager.DLLManager
 {
     /// <summary>
     /// Detects the redistributable DLSS runtimes shipped in a game directory.
@@ -96,6 +96,10 @@ namespace DLSS5Manager.GameScanner
             IEnumerable<DlssComponent> components,
             string type) => components.FirstOrDefault(component =>
                 component.IsPrimary && string.Equals(component.Type, type, StringComparison.Ordinal));
+
+        /// <summary>根据 DLL 文件名返回 DLSS 组件类型；未知文件返回 null。</summary>
+        public static string? GetTypeByFileName(string fileName) =>
+            KnownFiles.TryGetValue(fileName, out var type) ? type : null;
 
         private static string ReadVersion(string path)
         {

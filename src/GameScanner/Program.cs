@@ -1,3 +1,4 @@
+using DLSS5Manager.DLLManager;
 using DLSS5Manager.GameScanner;
 using DLSS5Manager.GameScanner.Models;
 using DLSS5Manager.GPU;
@@ -64,5 +65,72 @@ app.MapGet("/api/gpu/status", () =>
     return Results.Ok(reader.GetStatus());
 });
 
+// ===== DLL 管理接口 =====
+
+// 检测指定游戏目录里所有 DLSS DLL 所在的文件夹
+app.MapGet("/api/dll/locations", (string gamePath) =>
+{
+    var manager = new DllManager();
+    return Results.Ok(manager.DetectLocations(gamePath));
+});
+
+// 备份指定类型的 DLL
+app.MapPost("/api/dll/backup", (DllBackupRequest request) =>
+{
+    var manager = new DllManager();
+    return Results.Ok(manager.Backup(request.GamePath, request.Type));
+});
+
+// 替换指定类型的 DLL 为版本库中的目标版本
+app.MapPost("/api/dll/replace", (DllReplaceRequest request) =>
+{
+    var manager = new DllManager();
+    return Results.Ok(manager.Replace(request.GamePath, request.Type, request.Version));
+});
+
+// 从最新备份恢复指定类型的 DLL
+app.MapPost("/api/dll/restore", (DllRestoreRequest request) =>
+{
+    var manager = new DllManager();
+    return Results.Ok(manager.Restore(request.GamePath, request.Type));
+});
+
+// 列出指定游戏目录的所有备份记录
+app.MapGet("/api/dll/backups", (string gamePath) =>
+{
+    var manager = new DllManager();
+    return Results.Ok(manager.ListBackups(gamePath));
+});
+
+// 列出版本库中可用的 DLSS 版本
+app.MapGet("/api/dll/versions", () =>
+{
+    var manager = new DllManager();
+    return Results.Ok(manager.ListAvailableVersions());
+});
+
+// ===== DLSS 版本库接口 =====
+
+// 列出版本库中已收集到的各版本 DLL
+app.MapGet("/api/library", () =>
+{
+    var library = new DlssLibrary();
+    return Results.Ok(library.GetLibrary());
+});
+
+// 从所有已安装游戏收集 DLSS DLL 进版本库
+app.MapPost("/api/library/collect", () =>
+{
+    var scanner = new ScannerManager();
+    var gameDirectories = scanner.ScanAll().Select(game => game.InstallDirectory);
+    var library = new DlssLibrary();
+    return Results.Ok(library.CollectFromGames(gameDirectories));
+});
+
 // 后端固定监听 5000 端口，前端 vite 会把 /api 请求代理到这里
 app.Run("http://localhost:5000");
+
+// DLL 管理接口的请求体
+record DllBackupRequest(string GamePath, string Type);
+record DllReplaceRequest(string GamePath, string Type, string Version);
+record DllRestoreRequest(string GamePath, string Type);

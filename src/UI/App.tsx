@@ -9,6 +9,8 @@ import { Dashboard } from './components/Dashboard';
 import { GpuAnalyzer } from './components/GpuAnalyzer';
 import { Benchmark } from './components/Benchmark';
 import { SettingsPanel } from './components/SettingsPanel';
+import { DllManager } from './components/DllManager';
+import { LibraryPanel } from './components/LibraryPanel';
 import { mockGpuInfo } from './data';
 import { AppSettings, Game, GPUInfo } from './types';
 import { Language, translations } from './i18n';
@@ -157,54 +159,65 @@ export default function App() {
     >
       <Sidebar
         activeTab={activeTab}
-        setActiveTab={setActiveTab}
+        setActiveTab={(tab) => {
+          setSelectedGame(null);
+          setActiveTab(tab);
+        }}
         language={language}
         onToggleLanguage={() => setLanguage(language === 'en' ? 'zh' : 'en')}
       />
 
-      {/* 切换栏目时通过 key 触发内容重挂载，播放淡入上滑动画 */}
-      <div key={activeTab} className="page-enter flex-1 flex min-w-0">
-        {activeTab === 'games' && (
-          <Dashboard
-            games={games}
-            gpuInfo={gpuInfo}
-            onSelectGame={(game) => {
-              setSelectedGame(game);
-              console.log('Selected game:', game.name);
-            }}
-            language={language}
-            onScan={scanGames}
-            scanning={loading}
-            error={error}
-            driverReminder={settings.driverReminder}
-          />
-        )}
-
-        {activeTab === 'gpu' && <GpuAnalyzer language={language} />}
-
-        {activeTab === 'benchmark' && <Benchmark language={language} />}
-
-        {activeTab === 'settings' && (
-          <SettingsPanel
-            language={language}
-            setLanguage={setLanguage}
-            settings={settings}
-            setSettings={applySettings}
-          />
-        )}
-
-        {activeTab !== 'games' &&
-          activeTab !== 'gpu' &&
-          activeTab !== 'benchmark' &&
-          activeTab !== 'settings' && (
-            <div className="flex-1 flex items-center justify-center text-gray-400">
-              <div className="text-center">
-                <h2 className="text-xl font-medium text-gray-900 mb-2">{t.comingSoon}</h2>
-                <p>{t.comingSoonDesc}</p>
-              </div>
-            </div>
+      {selectedGame ? (
+        <DllManager
+          game={selectedGame}
+          onBack={() => setSelectedGame(null)}
+          language={language}
+        />
+      ) : (
+        /* 切换栏目时通过 key 触发内容重挂载，播放淡入上滑动画 */
+        <div key={activeTab} className="page-enter flex-1 flex min-w-0">
+          {activeTab === 'games' && (
+            <Dashboard
+              games={games}
+              gpuInfo={gpuInfo}
+              onSelectGame={setSelectedGame}
+              language={language}
+              onScan={scanGames}
+              scanning={loading}
+              error={error}
+              driverReminder={settings.driverReminder}
+            />
           )}
-      </div>
+
+          {activeTab === 'library' && <LibraryPanel language={language} />}
+
+          {activeTab === 'gpu' && <GpuAnalyzer language={language} />}
+
+          {activeTab === 'benchmark' && <Benchmark language={language} />}
+
+          {activeTab === 'settings' && (
+            <SettingsPanel
+              language={language}
+              setLanguage={setLanguage}
+              settings={settings}
+              setSettings={applySettings}
+            />
+          )}
+
+          {activeTab !== 'games' &&
+            activeTab !== 'library' &&
+            activeTab !== 'gpu' &&
+            activeTab !== 'benchmark' &&
+            activeTab !== 'settings' && (
+              <div className="flex-1 flex items-center justify-center text-gray-400">
+                <div className="text-center">
+                  <h2 className="text-xl font-medium text-gray-900 mb-2">{t.comingSoon}</h2>
+                  <p>{t.comingSoonDesc}</p>
+                </div>
+              </div>
+            )}
+        </div>
+      )}
     </div>
   );
 }

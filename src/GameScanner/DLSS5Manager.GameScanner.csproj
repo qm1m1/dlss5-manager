@@ -19,6 +19,8 @@
   <ItemGroup>
     <!-- 引用 GPU 检测模块（src/GPU） -->
     <ProjectReference Include="..\GPU\DLSS5Manager.GPU.csproj" />
+    <!-- 引用 DLL 管理模块（src/DLLManager） -->
+    <ProjectReference Include="..\DLLManager\DLSS5Manager.DLLManager.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,3 +1,5 @@
+using DLSS5Manager.DLLManager.Models;
+
 namespace DLSS5Manager.GameScanner.Models
 {
     /// <summary>

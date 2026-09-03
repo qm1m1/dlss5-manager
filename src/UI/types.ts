@@ -64,3 +64,55 @@ export interface AppSettings {
   backupKeep: number;
   dark: boolean;
 }
+
+export interface DllLocationGroup {
+  folderPath: string;
+  isPrimary: boolean;
+  components: DLSSComponent[];
+}
+
+export interface DllOperationResult {
+  success: boolean;
+  message: string;
+  sha256?: string | null;
+}
+
+export interface BackupRecord {
+  id: string;
+  gamePath: string;
+  type: string;
+  fileName: string;
+  originalPath: string;
+  version: string;
+  sha256: string;
+  backupPath: string;
+  backupTime: string;
+}
+
+export interface LibraryDllInfo {
+  type: string;
+  fileName: string;
+  version: string;
+  size: number;
+  sha256: string;
+}
+
+export interface LibraryVersion {
+  version: string;
+  files: LibraryDllInfo[];
+}
+
+export interface LibraryCollectItem {
+  version: string;
+  fileName: string;
+  type: string;
+  source: string;
+  status: 'Added' | 'Existing' | 'Skipped';
+}
+
+export interface LibraryCollectResult {
+  added: number;
+  existing: number;
+  skipped: number;
+  items: LibraryCollectItem[];
+}
