@@ -16,4 +16,9 @@
     <PackageReference Include="GameFinder.StoreHandlers.Xbox" Version="4.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- 引用 GPU 检测模块（src/GPU） -->
+    <ProjectReference Include="..\GPU\DLSS5Manager.GPU.csproj" />
+  </ItemGroup>
+
 </Project>

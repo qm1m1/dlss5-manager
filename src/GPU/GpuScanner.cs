@@ -2,10 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using DLSS5Manager.GameScanner.Models;
 using Microsoft.Win32;
 
-namespace DLSS5Manager.GameScanner;
+namespace DLSS5Manager.GPU;
 
 /// <summary>
 /// GPU 检测：优先使用 nvidia-smi（NVIDIA 驱动自带、最准确、无需注册表权限），

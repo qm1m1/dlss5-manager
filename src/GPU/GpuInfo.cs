@@ -1,4 +1,4 @@
-namespace DLSS5Manager.GameScanner.Models;
+namespace DLSS5Manager.GPU;
 
 /// <summary>单块显卡的检测结果</summary>
 public class GpuInfo

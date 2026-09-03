@@ -1,5 +1,6 @@
 using DLSS5Manager.GameScanner;
 using DLSS5Manager.GameScanner.Models;
+using DLSS5Manager.GPU;
 
 var builder = WebApplication.CreateBuilder(args);
 
