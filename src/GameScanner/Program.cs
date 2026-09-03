@@ -36,5 +36,12 @@ app.MapGet("/api/games", () =>
     return Results.Ok(dtos);
 });
 
+// GPU 检测接口：返回显卡型号、显存、驱动版本和 DLSS5 支持情况
+app.MapGet("/api/gpu", () =>
+{
+    var scanner = new GpuScanner();
+    return Results.Ok(scanner.Scan());
+});
+
 // 后端固定监听 5000 端口，前端 vite 会把 /api 请求代理到这里
 app.Run("http://localhost:5000");
