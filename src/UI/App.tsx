@@ -20,6 +20,10 @@ export default function App() {
 
   const t = translations[language];
 
+  // 是否检测到 DLSS（有版本号才算，排除「待检测 / 未检测到」）
+  const hasDlss = (game: Game) =>
+    game.dlssVersion !== '待检测' && game.dlssVersion !== '未检测到';
+
   // 调用 C# 后端扫描真实安装的游戏
   const scanGames = () => {
     setLoading(true);
@@ -29,7 +33,11 @@ export default function App() {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.json();
       })
-      .then((data: Game[]) => setGames(data))
+      .then((data: Game[]) => {
+        // 有 DLSS 的游戏排前面，没有的排后面，方便浏览
+        const sorted = [...data].sort((a, b) => Number(hasDlss(b)) - Number(hasDlss(a)));
+        setGames(sorted);
+      })
       .catch((err) => setError(err instanceof Error ? err.message : String(err)))
       .finally(() => setLoading(false));
   };

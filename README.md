@@ -49,8 +49,18 @@ dotnet run
 
 浏览器打开 http://localhost:3000，前端会通过 Vite 代理把 `/api` 请求转发到后端的 5000 端口。
 
+也可以直接双击根目录的 `restart-dev.cmd`，一键停止本项目已有的开发进程并在后台重启前后端。
+运行日志保存在 `.dev/logs/`。
+
 ### 注意事项
 1. 前后端需同时启动，否则前端扫描会报「扫描失败」。
 2. 后端仅支持 Windows（GameFinder 依赖注册表）。
 3. 国内网络：`npm install` 慢时先设镜像 `npm config set registry https://registry.npmmirror.com`。
 4. `.dotnet/`、`.nuget/`、`node_modules/` 均为本地生成目录，已加入 `.gitignore`。
+
+## 开源代码说明
+
+游戏目录内的 DLSS DLL 扫描采用了
+[DLSS Swapper](https://github.com/beeradmoore/dlss-swapper)（GPL-3.0）的核心设计思路：
+按已知运行库文件名递归发现文件，并读取 Windows PE 版本资源。当前实现为本项目独立编写，
+同时记录 SHA-256、所有候选路径，并在存在多份 DLL 时标记一个主要候选项。
