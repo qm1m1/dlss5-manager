@@ -1,0 +1,40 @@
+using DLSS5Manager.GameScanner;
+using DLSS5Manager.GameScanner.Models;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// 允许前端 dev server 跨域访问（虽然 vite 已配置代理，这里作为双保险）
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+        policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+});
+
+var app = builder.Build();
+
+app.UseCors();
+
+// 健康检查接口，用于确认后端已启动
+app.MapGet("/api/health", () => Results.Ok(new { status = "ok" }));
+
+// 游戏扫描接口：调用 GameFinder 扫描 Steam / Epic / GOG，返回 JSON 给前端
+app.MapGet("/api/games", () =>
+{
+    var scanner = new ScannerManager();
+    var games = scanner.ScanAll();
+
+    var dtos = games.Select(game => new GameDto
+    {
+        Id = game.Id,
+        Name = game.Name,
+        Path = game.InstallDirectory,
+        Launcher = game.Launcher,
+        CoverImage = game.CoverImage,
+        Icon = game.Icon
+    });
+
+    return Results.Ok(dtos);
+});
+
+// 后端固定监听 5000 端口，前端 vite 会把 /api 请求代理到这里
+app.Run("http://localhost:5000");

@@ -1,0 +1,6 @@
+{
+  "name": "DLSS5-Manager",
+  "description": "DLSS management, upgrade, configuration, and compatibility analysis tool.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}

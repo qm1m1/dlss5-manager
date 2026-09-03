@@ -1,0 +1,50 @@
+export const translations = {
+  en: {
+    navGames: 'My Games',
+    navLibrary: 'DLSS Library',
+    navGPU: 'GPU Analyzer',
+    navBenchmark: 'Benchmarks',
+    navSettings: 'Settings',
+    statusReady: 'Status: Ready',
+    activeGPU: 'Active GPU',
+    driver: 'Driver',
+    vram: 'VRAM',
+    detectedGames: 'Detected Games',
+    manageDesc: 'Manage DLSS versions for your installed games.',
+    quickScan: 'Quick Scan',
+    scanning: 'Scanning Drives...',
+    engine: 'Engine',
+    currentDLSS: 'Current DLSS',
+    recommended: 'Recommended',
+    manageBtn: 'Manage',
+    backupBtn: 'Backup',
+    comingSoon: 'Coming Soon',
+    comingSoonDesc: 'This module is under development.',
+    langToggle: '切换至中文'
+  },
+  zh: {
+    navGames: '我的游戏',
+    navLibrary: 'DLSS 版本库',
+    navGPU: 'GPU 分析',
+    navBenchmark: '性能测试',
+    navSettings: '系统设置',
+    statusReady: '运行状态: 就绪',
+    activeGPU: '当前显卡',
+    driver: '驱动版本',
+    vram: '显存容量',
+    detectedGames: '已检测到的游戏',
+    manageDesc: '管理与配置您电脑中安装的游戏的 DLSS 版本。',
+    quickScan: '快速扫描',
+    scanning: '正在扫描磁盘...',
+    engine: '游戏引擎',
+    currentDLSS: '当前 DLSS',
+    recommended: '推荐版本',
+    manageBtn: '版本管理',
+    backupBtn: '备份原版',
+    comingSoon: '敬请期待',
+    comingSoonDesc: '该功能模块正在开发中。',
+    langToggle: 'Switch to English'
+  }
+};
+
+export type Language = 'en' | 'zh';

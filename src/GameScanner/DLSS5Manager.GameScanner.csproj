@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- 引入 erri120/GameFinder 核心组件与各大平台处理器 -->
+    <PackageReference Include="GameFinder.StoreHandlers.Steam" Version="4.0.0" />
+    <PackageReference Include="GameFinder.StoreHandlers.EGS" Version="4.0.0" />
+    <PackageReference Include="GameFinder.StoreHandlers.GOG" Version="4.0.0" />
+    <PackageReference Include="GameFinder.StoreHandlers.Xbox" Version="4.0.0" />
+  </ItemGroup>
+
+</Project>
