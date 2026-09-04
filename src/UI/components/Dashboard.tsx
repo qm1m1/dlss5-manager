@@ -5,7 +5,7 @@ import { Language, translations } from '../i18n';
 
 interface DashboardProps {
   games: Game[];
-  gpuInfo: GPUInfo;
+  gpuInfo: GPUInfo | null;
   onSelectGame: (game: Game) => void;
   language: Language;
   onScan: () => void;
@@ -37,7 +37,9 @@ export function Dashboard({
             <span className="text-[10px] text-gray-400 uppercase font-bold tracking-widest mb-1">{t.activeGPU}</span>
             <div className="flex items-center gap-2">
               <Cpu className="w-5 h-5 text-green-600" />
-              <span className="text-gray-900 font-bold text-lg">{gpuInfo.model}</span>
+              <span className="text-gray-900 font-bold text-lg">
+                {gpuInfo ? gpuInfo.model : t.gpuNotFound}
+              </span>
             </div>
           </div>
 
@@ -46,27 +48,27 @@ export function Dashboard({
           <div className="flex items-center gap-6">
             <div className="flex flex-col">
               <span className="text-[10px] text-gray-400 uppercase font-bold tracking-widest mb-1">{t.driver}</span>
-              <span className="text-gray-700 font-mono text-sm">{gpuInfo.driverVersion}</span>
+              <span className="text-gray-700 font-mono text-sm">{gpuInfo?.driverVersion || '--'}</span>
             </div>
             <div className="flex flex-col">
               <span className="text-[10px] text-gray-400 uppercase font-bold tracking-widest mb-1">{t.vram}</span>
-              <span className="text-gray-700 font-mono text-sm">{gpuInfo.vram}</span>
+              <span className="text-gray-700 font-mono text-sm">{gpuInfo?.vram || '--'}</span>
             </div>
           </div>
         </div>
 
         <div className="flex items-center gap-3">
-          {gpuInfo.dlssSupported && (
+          {gpuInfo?.dlssSupported && (
             <span className="px-3 py-1 bg-green-50 text-green-700 border border-green-200 rounded-lg text-[10px] font-bold tracking-wider uppercase flex items-center gap-1.5">
               <CheckCircle2 className="w-3 h-3" /> DLSS
             </span>
           )}
-          {gpuInfo.frameGenSupported && (
+          {gpuInfo?.frameGenSupported && (
             <span className="px-3 py-1 bg-green-50 text-green-700 border border-green-200 rounded-lg text-[10px] font-bold tracking-wider uppercase flex items-center gap-1.5">
               <CheckCircle2 className="w-3 h-3" /> Frame Gen
             </span>
           )}
-          {driverReminder && gpuInfo.driverReady === false && (
+          {driverReminder && gpuInfo?.driverReady === false && (
             <span className="px-3 py-1 bg-red-50 text-red-700 border border-red-200 rounded-lg text-[10px] font-bold tracking-wider uppercase flex items-center gap-1.5">
               <AlertTriangle className="w-3 h-3" /> {t.needDriverUpdate}
             </span>
