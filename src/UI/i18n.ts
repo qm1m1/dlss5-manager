@@ -32,6 +32,7 @@ export const translations = {
     gpuFan: 'Fan',
     gpuNoData: 'Unable to read GPU status. Please make sure the backend is running.',
     gpuLive: 'Live · auto refresh',
+    gpuNotFound: 'GPU not detected',
     benchmarkTitle: 'GPU Benchmark',
     benchmarkDesc: 'Run a 10-second WebGL rendering test to measure your GPU performance.',
     benchStart: 'Start Test',
@@ -89,8 +90,17 @@ export const translations = {
     libraryResultAdded: 'Added',
     libraryResultExisting: 'Already exists',
     libraryResultSkipped: 'Skipped',
+    libraryTitle: 'DLSS Library',
+    libraryDownloadDesc: 'Latest DLSS component versions from official and trusted sources.',
+    libraryNotice: 'Version info compiled from public sources, updated 2026-09-04. DLSS 5 (Neural Rendering) launches today with NBA 2K27 on GeForce RTX 50 series and requires the new Game Ready driver; the component version below is from driver/leak analysis - please confirm the official version in NVIDIA App. Frame Generation & Ray Reconstruction entries are being verified.',
+    libraryLatest: 'Latest',
     libraryType: 'Type',
-    librarySize: 'Size'
+    libraryVersion: 'Version',
+    libraryDate: 'Release Date',
+    librarySize: 'Size',
+    libraryNote: 'Notes',
+    librarySource: 'Source',
+    libraryDownload: 'Download'
   },
   zh: {
     navGames: '我的游戏',
@@ -125,6 +135,7 @@ export const translations = {
     gpuFan: '风扇',
     gpuNoData: '未读取到 GPU 状态，请确认后端已启动。',
     gpuLive: '实时 · 每 3 秒自动刷新',
+    gpuNotFound: '未检测到显卡',
     benchmarkTitle: 'GPU 性能测试',
     benchmarkDesc: '运行 10 秒 WebGL 渲染压力测试，评估显卡渲染性能。',
     benchStart: '开始测试',
@@ -182,8 +193,17 @@ export const translations = {
     libraryResultAdded: '新增',
     libraryResultExisting: '已存在',
     libraryResultSkipped: '跳过',
+    libraryTitle: 'DLSS 版本库',
+    libraryDownloadDesc: '汇总 DLSS 各组件的最新版本信息（来源：NVIDIA 官网及权威硬件媒体）。',
+    libraryNotice: '版本信息来自公开渠道整理，更新时间 2026-09-04。DLSS 5（神经渲染）今天随《NBA 2K27》在 GeForce RTX 50 系列上线，需新版 Game Ready 驱动；下方组件版本来自驱动/泄露包分析，正式版本号请以 NVIDIA App 为准。帧生成与光线重建条目正在核实补充。',
+    libraryLatest: '最新',
     libraryType: '类型',
-    librarySize: '大小'
+    libraryVersion: '版本',
+    libraryDate: '发布日期',
+    librarySize: '大小',
+    libraryNote: '说明',
+    librarySource: '来源',
+    libraryDownload: '下载'
   }
 };
 

@@ -11,7 +11,6 @@ import { Benchmark } from './components/Benchmark';
 import { SettingsPanel } from './components/SettingsPanel';
 import { DllManager } from './components/DllManager';
 import { LibraryPanel } from './components/LibraryPanel';
-import { mockGpuInfo } from './data';
 import { AppSettings, Game, GPUInfo } from './types';
 import { Language, translations } from './i18n';
 
@@ -46,8 +45,8 @@ export default function App() {
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
   const [language, setLanguageState] = useState<Language>(loadLanguage);
   const [games, setGames] = useState<Game[]>([]);
-  // 先用 mock 数据占位，后端返回真实显卡信息后替换，保证界面不会闪空白
-  const [gpuInfo, setGpuInfo] = useState<GPUInfo>(mockGpuInfo);
+  // 后端返回真实显卡信息前为 null，页面显示"未检测到显卡"，不使用假数据
+  const [gpuInfo, setGpuInfo] = useState<GPUInfo | null>(null);
   const [settings, setSettings] = useState<AppSettings>(loadSettings);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -121,13 +120,17 @@ export default function App() {
         return res.json();
       })
       .then((data: any[]) => {
-        if (!Array.isArray(data) || data.length === 0) return;
+        // 后端没有返回显卡时也置空，页面显示"未检测到显卡"，而不是假数据
+        if (!Array.isArray(data) || data.length === 0) {
+          setGpuInfo(null);
+          return;
+        }
         const g = data[0];
         // 把后端返回的字段映射成前端 GPUInfo 认识的形状
         setGpuInfo({
-          model: g.name ?? mockGpuInfo.model,
-          vram: g.vramGb != null ? `${g.vramGb} GB` : mockGpuInfo.vram,
-          driverVersion: g.driverVersion ?? mockGpuInfo.driverVersion,
+          model: g.name ?? '',
+          vram: g.vramGb != null ? `${g.vramGb} GB` : '',
+          driverVersion: g.driverVersion ?? '',
           dlssSupported: g.supportsDlss5 === true,
           // 后端暂不返回这两项：RTX 显卡普遍支持帧生成与光线重建，按型号推断
           frameGenSupported: String(g.name ?? '').includes('RTX'),
@@ -138,7 +141,8 @@ export default function App() {
         });
       })
       .catch(() => {
-        // 后端未启动时保留当前显示（mock），不打扰用户
+        // 后端未启动或读取失败：置空，由页面显示"未检测到显卡"
+        setGpuInfo(null);
       });
   };
 

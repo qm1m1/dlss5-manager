@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { LibraryCollectResult, LibraryVersion } from '../types';
 import { Language, translations } from '../i18n';
+import { Library as DownloadLibrary } from './Library';
 
 interface LibraryPanelProps {
   language: Language;
@@ -238,6 +239,9 @@ export function LibraryPanel({ language }: LibraryPanelProps) {
               ))}
             </div>
           )}
+
+          {/* 官方下载链接 */}
+          <DownloadLibrary language={language} />
         </div>
       </main>
     </div>
